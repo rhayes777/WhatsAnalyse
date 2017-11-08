@@ -99,6 +99,20 @@ class Author:
         return self.chat.filtered_comments(self.name)
 
     @property
+    def bursts(self):
+        last_comment_time = datetime.datetime(1970, 1, 1)
+        burst = None
+        bursts = []
+        for comment in self.comments:
+            if comment.datetime - last_comment_time < datetime.timedelta(seconds=10):
+                burst.append(comment)
+            else:
+                bursts.append(burst)
+                burst = [comment]
+            last_comment_time = comment.datetime
+        return bursts
+
+    @property
     def post_count(self):
         return len(self.comments)
 
