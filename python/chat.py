@@ -98,6 +98,10 @@ class Author:
     def comments(self):
         return self.chat.filtered_comments(self.name)
 
+    @property
+    def post_count(self):
+        return len(self.comments)
+
     def word_counts(self, exclude_common_words=True):
         count_dict = {}
         for comment in self.comments:
@@ -138,7 +142,7 @@ class Chat:
     def authors(self):
         return map(lambda name: Author(name, self), {comment.author_name for comment in self.comments})
 
-    def filtered_comments(self, author_name=None, key_word=None):
+    def filtered_comments(self, author_name=None, key_word=None, min_hour=None, max_hour=None):
         comments = self.comments
 
         if author_name is not None:
@@ -146,6 +150,12 @@ class Chat:
 
         if key_word is not None:
             comments = filter(lambda comment: key_word.lower() in comment.text.lower(), comments)
+
+        if min_hour is not None:
+            comments = filter(lambda comment: comment.datetime.hour >= min_hour, comments)
+
+        if max_hour is not None:
+            comments = filter(lambda comment: comment.datetime.hour < max_hour, comments)
 
         return comments
 
