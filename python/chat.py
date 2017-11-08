@@ -149,6 +149,13 @@ class Chat:
 
         return comments
 
+    # def print_mentions(self):
+    #     for author in self.authors:
+    #         for word_count in author.word_counts():
+    #             if word_count[0] in names:
+    #                 print "{} {}".format(word_count[0], word_count[1])
+    #         print "\n"
+
     def __iter__(self):
         for comment in self.comments:
             yield comment
