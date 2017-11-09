@@ -62,11 +62,27 @@ class Item:
 
     @property
     def is_comment(self):
-        return len(self.line.split(": ")) > 2 and not self.is_image and not self.is_gif
+        return len(self.line.split(": ")) > 2 and not self.is_media
+
+    @property
+    def is_media(self):
+        return self.is_gif or self.is_audio or self.is_video or self.is_image
 
     @property
     def is_gif(self):
         return "GIF omitted" in self.text
+
+    @property
+    def is_audio(self):
+        return "audio omitted" in self.text
+
+    @property
+    def is_video(self):
+        return "video omitted" in self.text
+
+    @property
+    def is_image(self):
+        return '<\xe2\x80\x8eimage omitted>\r\n' == self.line.split(" {}: ".format(self.author_name))[-1]
 
     @property
     def author_name(self):
@@ -75,10 +91,6 @@ class Item:
     @property
     def text(self):
         return self.line.split(" {}: ".format(self.author_name))[-1]
-
-    @property
-    def is_image(self):
-        return '<\xe2\x80\x8eimage omitted>\r\n' == self.line.split(" {}: ".format(self.author_name))[-1]
 
     def __repr__(self):
         if self.is_comment:
