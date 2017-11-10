@@ -10,8 +10,9 @@ EXCLUDED_WORDS = {"the", "a", "i", "to", "of", "you", "is", "and", "for", "in", 
 
 
 class Item:
-    def __init__(self, line):
+    def __init__(self, line, chat):
         self.line = line
+        self.chat = chat
 
     @property
     def datetime(self):
@@ -45,6 +46,10 @@ class Item:
     @property
     def author_name(self):
         return self.line.split(": ")[1]
+
+    @property
+    def author(self):
+        return self.chat.author_with_name(self.author_name)
 
     @property
     def text(self):
@@ -116,15 +121,26 @@ class Chat:
 
     @property
     def items(self):
-        return map(Item, self.lines)
+        return map(lambda line: Item(line, self), self.lines)
 
     @property
     def comments(self):
         return filter(lambda i: i.is_comment, self.items)
 
     @property
+    def start_datetime(self):
+        return self.items[0].datetime
+
+    @property
+    def end_datetime(self):
+        return self.items[-1].datetime
+
+    @property
     def authors(self):
         return map(lambda name: Author(name, self), {comment.author_name for comment in self.comments})
+
+    def author_with_name(self, name):
+        return filter(lambda author: author.name == name, self.authors)[0]
 
     def filtered_comments(self, author_name=None, key_word=None, min_hour=None, max_hour=None):
         comments = self.comments
@@ -157,6 +173,13 @@ def is_item_start(line):
     return s
 
 
-if __name__ == "__main__":
+def print_summary(filename, keyword):
     chat = Chat(sys.argv[1])
     chat.print_comments_with_keyword(sys.argv[2])
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 2:
+        print_summary(sys.argv[1], sys.argv[2])
+    else:
+        print "usage: whatsanalyse.py [filename] [keyword]"
