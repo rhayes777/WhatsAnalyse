@@ -1,5 +1,6 @@
 import re
 import datetime
+import sys
 
 DATE_TIME_FORMAT = "%d/%m/%Y, %H:%M:%S"
 
@@ -204,3 +205,8 @@ class Chat:
 def is_item_start(line):
     s = re.sub(r'(\d\d\/\d\d\/\d\d\d\d), (\d\d:\d\d:\d\d.*)', r'\1 \2', line)
     return s
+
+
+if __name__ == "__main__":
+    chat = Chat(sys.argv[1])
+    chat.print_comments_with_keyword(sys.argv[2])
