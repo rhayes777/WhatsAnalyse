@@ -185,6 +185,10 @@ class Chat:
 
         return comments
 
+    def print_comments_with_keyword(self, key_word):
+        for comment in self.filtered_comments(key_word=key_word):
+            print "{} {}: {}".format(comment.datetime, comment.author_name, comment.text)
+
     # def print_mentions(self):
     #     for author in self.authors:
     #         for word_count in author.word_counts():
