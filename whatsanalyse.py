@@ -142,7 +142,8 @@ class Chat:
     def author_with_name(self, name):
         return filter(lambda author: author.name == name, self.authors)[0]
 
-    def filtered_comments(self, author_name=None, key_word=None, min_hour=None, max_hour=None):
+    def filtered_comments(self, author_name=None, key_word=None, min_hour=None, max_hour=None, min_datetime=None,
+                          max_datetime=None, key_words=None):
         comments = self.comments
 
         if author_name is not None:
@@ -151,11 +152,21 @@ class Chat:
         if key_word is not None:
             comments = filter(lambda comment: key_word.lower() in comment.text.lower(), comments)
 
+        if key_words is not None:
+            for kw in key_words:
+                comments = filter(lambda comment: kw.lower() in comment.text.lower(), comments)
+
         if min_hour is not None:
             comments = filter(lambda comment: comment.datetime.hour >= min_hour, comments)
 
         if max_hour is not None:
             comments = filter(lambda comment: comment.datetime.hour < max_hour, comments)
+
+        if min_datetime is not None:
+            comments = filter(lambda comment: min_datetime <= comment.datetime, comments)
+
+        if max_datetime is not None:
+            comments = filter(lambda comment: comment.datetime < max_datetime, comments)
 
         return comments
 
