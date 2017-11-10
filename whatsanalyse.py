@@ -187,7 +187,7 @@ class Author:
 
         :return: A list of Comment objects made by this author
         """
-        return self.chat.filtered_comments(self.name)
+        return filter_comments(self.chat.comments, author_name=self.name)
 
     @property
     def bursts(self):
