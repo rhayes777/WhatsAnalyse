@@ -126,8 +126,8 @@ class Item:
             yield word.lower()
 
 
-def filter_comments(comments, author_name=None, key_word=None, min_minute=None, max_minute=None, min_datetime=None,
-                    max_datetime=None, key_words=None):
+def filter_comments(comments, author_name=None, key_word=None, min_minute=None, max_minute=None, min_hour=None,
+                    max_hour=None, min_datetime=None, max_datetime=None, key_words=None):
     """
     Filters a list of comments by one or more predicates
     :param comments: The original list of comments
@@ -135,11 +135,20 @@ def filter_comments(comments, author_name=None, key_word=None, min_minute=None, 
     :param key_word: A key word contained in the text of the comment
     :param min_minute: The minimum minute of the day on which a comment was posted (0 - 1440)
     :param max_minute: The maximum minute of the day on which a comment was posted (0 - 1440)
+    :param min_hour: The minimum hour of the day on which a comment was posted (0 - 1440)
+    :param max_hour: The maximum hour of the day on which a comment was posted (0 - 1440)
     :param min_datetime: The minimum datetime (inclusive) on which a comment was posted
     :param max_datetime: The maximum datetime (exclusive) on which a comment was posted
     :param key_words: A list of key words found in the comment (all must be present for a match)
     :return: A filtered list of comments
     """
+
+    if min_hour is not None:
+        min_minute = 60 * min_hour + 0 if min_minute is None else min_minute
+
+    if max_hour is not None:
+        max_minute = 60 * max_hour + 0 if max_minute is None else max_minute
+
     if author_name is not None:
         comments = filter(lambda comment: comment.author_name == author_name, comments)
 
@@ -166,6 +175,14 @@ def filter_comments(comments, author_name=None, key_word=None, min_minute=None, 
 
 
 def bucket_comments_by_date(comments, start_datetime, end_datetime, bucket_timedelta):
+    """
+    Groups comments into lists posted between date intervals
+    :param comments: The comments to group
+    :param start_datetime: The earliest date time
+    :param end_datetime: The latest date time
+    :param bucket_timedelta: The size of each bucket
+    :return: A list of tuples associating start dates with lists of comments
+    """
     buckets = []
     current_datetime = start_datetime
     while current_datetime < end_datetime:
@@ -176,6 +193,12 @@ def bucket_comments_by_date(comments, start_datetime, end_datetime, bucket_timed
 
 
 def bucket_comments_by_time_of_day(comments, delta_minutes):
+    """
+    Groups comments into lists posted at different times of day
+    :param comments: The comments to group
+    :param delta_minutes: The size of each bucket
+    :return: A list of tuples associating starts times, in minutes between 0 and 1440, with lists of comments
+    """
     buckets = []
     minutes_in_a_day = 1440
     current = 0
