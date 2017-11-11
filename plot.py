@@ -32,13 +32,12 @@ def plot_usage_over_day(chat_name):
         return "{:02d}:{:02d}".format(hour, minute)
 
     fig, ax = plt.subplots()
-    for author in chat.authors:
+    for author in chat.authors[:1]:
         labels.append(author.name)
         tuple_list = whatsanalyse.bucket_comments_by_time_of_day(author.comments, 15)
-        print tuple_list
-        tuple_list = map(lambda tup: (tup[0], len(tup[1])), tuple_list)
+        tuple_list = map(lambda tup: (format_minutes_of_day(tup[0]), len(tup[1])), tuple_list)
 
-        plt.xticks(range(len(tuple_list)), map(lambda t: t[0], tuple_list))
+        plt.xticks(map(lambda i: 4*i, range(24)), ["{:02d}:00".format(hour) for hour in range(24)])
         ax.plot(range(len(tuple_list)), map(lambda t: t[1], tuple_list), label=author.name)
     handles, _ = ax.get_legend_handles_labels()
     ax.legend(handles, labels)
