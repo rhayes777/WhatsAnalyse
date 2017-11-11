@@ -346,11 +346,6 @@ class Chat:
             yield comment
 
 
-def is_item_start(line):
-    s = re.sub(r'(\d\d\/\d\d\/\d\d\d\d), (\d\d:\d\d:\d\d.*)', r'\1 \2', line)
-    return s
-
-
 def print_summary(filename, keyword):
     chat = Chat(filename)
     chat.print_comments_with_keyword(keyword)
