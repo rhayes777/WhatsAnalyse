@@ -105,6 +105,10 @@ class Item:
         """
         return self.line.split(" {}: ".format(self.author_name))[-1]
 
+    @property
+    def minute_of_day(self):
+        return 60 * self.datetime.hour + self.datetime.minute
+
     def __repr__(self):
         if self.is_comment:
             return "{} {}: {}".format(self.author_name, self.datetime, self.text)
@@ -122,15 +126,15 @@ class Item:
             yield word.lower()
 
 
-def filter_comments(comments, author_name=None, key_word=None, min_hour=None, max_hour=None, min_datetime=None,
+def filter_comments(comments, author_name=None, key_word=None, min_minute=None, max_minute=None, min_datetime=None,
                     max_datetime=None, key_words=None):
     """
     Filters a list of comments by one or more predicates
     :param comments: The original list of comments
     :param author_name: The name of the author
     :param key_word: A key word contained in the text of the comment
-    :param min_hour: The minimum hour of the day on which a comment was posted
-    :param max_hour: The maximum hour of the day on which a comment was posted
+    :param min_minute: The minimum minute of the day on which a comment was posted (0 - 1440)
+    :param max_minute: The maximum minute of the day on which a comment was posted (0 - 1440)
     :param min_datetime: The minimum datetime (inclusive) on which a comment was posted
     :param max_datetime: The maximum datetime (exclusive) on which a comment was posted
     :param key_words: A list of key words found in the comment (all must be present for a match)
@@ -146,11 +150,11 @@ def filter_comments(comments, author_name=None, key_word=None, min_hour=None, ma
         for kw in key_words:
             comments = filter(lambda comment: kw.lower() in comment.lowercase_words(), comments)
 
-    if min_hour is not None:
-        comments = filter(lambda comment: comment.datetime.hour >= min_hour, comments)
+    if min_minute is not None:
+        comments = filter(lambda comment: comment.minute_of_day >= min_minute, comments)
 
-    if max_hour is not None:
-        comments = filter(lambda comment: comment.datetime.hour < max_hour, comments)
+    if max_minute is not None:
+        comments = filter(lambda comment: comment.minute_of_day < max_minute, comments)
 
     if min_datetime is not None:
         comments = filter(lambda comment: min_datetime <= comment.datetime, comments)
@@ -161,13 +165,24 @@ def filter_comments(comments, author_name=None, key_word=None, min_hour=None, ma
     return comments
 
 
-def bucket_comments(comments, start_datetime, end_datetime, bucket_timedelta):
+def bucket_comments_by_date(comments, start_datetime, end_datetime, bucket_timedelta):
     buckets = []
     current_datetime = start_datetime
     while current_datetime < end_datetime:
         buckets.append((current_datetime, filter_comments(comments, min_datetime=current_datetime,
                                                           max_datetime=current_datetime + bucket_timedelta)))
         current_datetime += bucket_timedelta
+    return buckets
+
+
+def bucket_comments_by_time_of_day(comments, delta_minutes):
+    buckets = []
+    minutes_in_a_day = 1440
+    current = 0
+    while current < minutes_in_a_day:
+        buckets.append(
+            (current, filter_comments(comments, min_minute=current, max_minute=current + delta_minutes)))
+        current += delta_minutes
     return buckets
 
 
