@@ -111,11 +111,11 @@ class Item:
 
     def __repr__(self):
         if self.is_comment:
-            return "{} {}: {}".format(self.author_name, self.datetime, self.text)
+            return "{} {}: {}".format(self.datetime, self.author_name, self.text)
 
     def __str__(self):
         if self.is_comment:
-            return "{} {}: {}".format(self.author_name, self.datetime, self.text)
+            return "{} {}: {}".format(self.datetime, self.author_name, self.text)
 
     def __iter__(self):
         for word in filter(lambda w: w != " ", self.text.replace('\n', '').split(" ")):
