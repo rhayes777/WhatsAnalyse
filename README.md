@@ -1,4 +1,4 @@
-A python project to parse and analyse WhatsApp conversations.
+A Python project to parse and analyse WhatsApp conversations.
 
 # Basic Usage
 
