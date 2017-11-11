@@ -117,6 +117,10 @@ class Item:
         for word in filter(lambda w: w != " ", self.text.replace('\n', '').split(" ")):
             yield word
 
+    def lowercase_words(self):
+        for word in self:
+            yield word.lower()
+
 
 def filter_comments(comments, author_name=None, key_word=None, min_hour=None, max_hour=None, min_datetime=None,
                     max_datetime=None, key_words=None):
@@ -136,11 +140,11 @@ def filter_comments(comments, author_name=None, key_word=None, min_hour=None, ma
         comments = filter(lambda comment: comment.author_name == author_name, comments)
 
     if key_word is not None:
-        comments = filter(lambda comment: key_word.lower() in comment.text.lower(), comments)
+        comments = filter(lambda comment: key_word.lower() in comment.lowercase_words(), comments)
 
     if key_words is not None:
         for kw in key_words:
-            comments = filter(lambda comment: kw.lower() in comment.text.lower(), comments)
+            comments = filter(lambda comment: kw.lower() in comment.lowercase_words(), comments)
 
     if min_hour is not None:
         comments = filter(lambda comment: comment.datetime.hour >= min_hour, comments)
