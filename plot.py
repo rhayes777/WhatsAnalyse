@@ -32,7 +32,7 @@ def plot_usage_over_day(chat_name):
         return "{:02d}:{:02d}".format(hour, minute)
 
     fig, ax = plt.subplots()
-    for author in chat.authors[:1]:
+    for author in chat.authors:
         labels.append(author.name)
         tuple_list = whatsanalyse.bucket_comments_by_time_of_day(author.comments, 15)
         tuple_list = map(lambda tup: (format_minutes_of_day(tup[0]), len(tup[1])), tuple_list)
