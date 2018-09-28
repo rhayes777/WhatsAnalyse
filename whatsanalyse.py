@@ -2,7 +2,7 @@ import re
 import datetime
 import sys
 
-DATE_TIME_FORMAT = "%d/%m/%Y, %H:%M:%S"
+DATE_TIME_FORMAT = "%d/%m/%Y, %H:%M"
 
 EXCLUDED_WORDS = {"the", "a", "i", "to", "of", "you", "is", "and", "for", "in", "on", "it", "my", "be", "i'm", "that",
                   "and", "have", "are", "with", "at", "it's", "we", "me", "he", "your", "do", "no", "get", "it", "not",
@@ -30,7 +30,7 @@ class Item:
 
         :return: The datetime at which this item was posted
         """
-        date_part = self.line.split(": ")[0]
+        date_part = self.line.split(" - ")[0]
         return datetime.datetime.strptime(date_part, DATE_TIME_FORMAT)
 
     @property
@@ -39,7 +39,7 @@ class Item:
 
         :return: True if this item is a comment
         """
-        return len(self.line.split(": ")) > 2 and not self.is_media
+        return len(self.line.split(" - ")) > 1 and not self.is_media
 
     @property
     def is_media(self):
@@ -87,7 +87,7 @@ class Item:
 
         :return: The name of the person that posted this item
         """
-        return self.line.split(": ")[1]
+        return self.line.split(" - ")[1]
 
     @property
     def author(self):
