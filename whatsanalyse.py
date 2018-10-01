@@ -1,4 +1,3 @@
-import re
 import datetime
 import sys
 
@@ -15,7 +14,7 @@ class Item:
     such as an image
     """
 
-    def __init__(self, line, chat):
+    def __init__(self, line, chat=None):
         """
 
         :param line: A line from the chat text file
@@ -87,7 +86,7 @@ class Item:
 
         :return: The name of the person that posted this item
         """
-        return self.line.split(" - ")[1]
+        return self.line.split(" - ")[1].split(":")[0]
 
     @property
     def author(self):
